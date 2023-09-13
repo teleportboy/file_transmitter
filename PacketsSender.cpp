@@ -49,3 +49,11 @@ void PacketsSender::start(QVector<Packet*>* packets) {
         threads[i]->start();
     }
 }
+
+void PacketsSender::sendApprovalPacket(QString address, quint16 port, PacketData packetData) {
+    packetData.packetType = PacketType::ApproveFilePacket;
+    packetData.data.clear();
+
+    Packet packet(packetData, address, port);
+    packet.trySendPacket();
+}

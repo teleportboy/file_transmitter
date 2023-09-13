@@ -18,6 +18,10 @@ private:
     int packetSize;
 
     QVector<Packet*>* packetsInVector;
+
+public slots:
+    void stopResendingPacket(int packetId);
+
 };
 
 #endif // PacketsContainer_H

@@ -5,29 +5,26 @@
 #include "PacketsContainer.h"
 #include "PacketsSender.h"
 #include "PacketReceiver.h"
+#include "FileBuilder.h"
 
 #include <QTextStream>
 
 int main(int argc, char *argv[]) {
     QCoreApplication a(argc, argv);
 
-    QTextStream input(stdin);
-    qDebug() << "Режим работы: s - sender, r - receiver";
-
     PacketsContainer packets("./CMakeCache.txt", "127.0.0.1");
-    PacketsSender sender(2);
-
+    PacketsSender sender(2);    
+    FileBuilder fileBuilder;
     PacketReceiver receiver;
 
-    QString mode = input.readLine();
-    if (mode == "s") {
-        qDebug() << "sender";
-        sender.start(packets.makePacketsFromFile());
-    } else {
-        qDebug() << "receiver";
-        receiver.startReceive();
-    }
+    QObject::connect(&receiver, &PacketReceiver::packetReceived, &packets, &PacketsContainer::stopResendingPacket);
+    QObject::connect(&receiver, &PacketReceiver::addPacketToFile, &fileBuilder, &FileBuilder::addPacket);
+    QObject::connect(&receiver, &PacketReceiver::approvePacket, &sender, &PacketsSender::sendApprovalPacket);
 
-    return a.exec();
-    input.readLine();
+    sender.start(packets.makePacketsFromFile());
+    receiver.startReceive();
+
+    a.exec();
+
+    return 0;
 }
