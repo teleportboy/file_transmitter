@@ -18,6 +18,9 @@ private:
 
 public slots:
     void addPacket(PacketData packet);
+
+signals:
+    void closeApp();
 };
 
 #endif // FILEBUILDER_H

@@ -14,9 +14,9 @@ PacketsSender::PacketsSender(int threadsCount, QObject *parent)
     }
 }
 
-void PacketsSender::parallelizeSendingPackets(QVector<Packet*>* packets) {
-    for (int i = 0, currentThreadIndex = 0; i < packets->length(); i++) {
-        parallelizePackets[currentThreadIndex].append((*packets)[i]);
+void PacketsSender::parallelizeSendingPackets(QMap<int, Packet*> packets) {
+    for (int i = 0, currentThreadIndex = 0; i < packets.count(); i++) {
+        parallelizePackets[currentThreadIndex].append(packets[i]);
 
         if (++currentThreadIndex == threadsCount) {
             currentThreadIndex = 0;
@@ -40,13 +40,19 @@ void PacketsSender::connectPacketsWithThreads() {
     }
 }
 
-void PacketsSender::start(QVector<Packet*>* packets) {
+void PacketsSender::start(QMap<int, Packet*> packets) {
     parallelizeSendingPackets(packets);
     joinPacketsToThreads();
     connectPacketsWithThreads();
 
     for (int i = 0; i < threadsCount; i++) {
         threads[i]->start();
+    }
+}
+
+void PacketsSender::stop() {
+    for (int i = 0; i < threadsCount; i++) {
+        threads[i]->exit();
     }
 }
 

@@ -1,8 +1,8 @@
 #include "Packet.h"
 #include <QDebug>
 
-Packet::Packet(QByteArray data, QString ipv4, int id, PacketType type,
-               quint16 port, int msDelayResent, QObject* parent)
+Packet::Packet(QByteArray data, QString ipv4, int id,
+               quint16 port, PacketType type, int msDelayResent, QObject* parent)
     : port(port), QObject(parent), msDelayResent(msDelayResent)
 {
     packet.packetId = id;
@@ -53,7 +53,7 @@ void Packet::packetSent() {
 void Packet::stopPacketSending() {
     timer->stop();
     disconnect(timer, nullptr, nullptr, nullptr);
-    //deleteLater();
+    deleteLater();
 }
 
 void Packet::startPacketSending() {
@@ -70,6 +70,6 @@ void Packet::fileExtension(QString fileExtension) {
 }
 
 Packet::~Packet() {
-    delete timer;
+    //delete timer;
     delete address;
 }

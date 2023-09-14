@@ -11,13 +11,15 @@ class PacketsSender : public QObject {
     Q_OBJECT
 public:
     PacketsSender(int threadsCount = 10, QObject *parent = nullptr);
-    void start(QVector<Packet*>* packets);
+    void start(QMap<int, Packet*> packets);
+
 
 public slots:
     void sendApprovalPacket(QString address, quint16 port, PacketData packetData);
+    void stop();
 
 protected:
-    void parallelizeSendingPackets(QVector<Packet*>* packets);
+    void parallelizeSendingPackets(QMap<int, Packet*> packets);
     void joinPacketsToThreads();
     void connectPacketsWithThreads();
 

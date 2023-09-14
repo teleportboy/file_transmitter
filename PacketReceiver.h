@@ -10,7 +10,7 @@
 class PacketReceiver : public QObject {
     Q_OBJECT
 public:
-    PacketReceiver(QObject *parent = nullptr);
+    PacketReceiver(int port, QObject *parent = nullptr);
     void startReceive();
 
 private:

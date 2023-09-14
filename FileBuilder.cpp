@@ -6,7 +6,6 @@
 #include "FileBuilder.h"
 #include "types.h"
 
-
 //что то надо было спросить про инициализацию QObject.. todo
 FileBuilder::FileBuilder(QObject *parent)
     : QObject{parent}
@@ -40,4 +39,6 @@ void FileBuilder::buildFile(QString fileExtension) {
     for (it = filePackets.begin(); it != filePackets.end(); it++) {
         file.write(it.value());
     }
+
+    emit closeApp();
 }

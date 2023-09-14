@@ -3,25 +3,28 @@
 
 #include <QObject>
 #include <QString>
+#include <QMap>
 
 #include "Packet.h"
+#include "Settings.h"
 
 class PacketsContainer : public QObject {
     Q_OBJECT
 public:
-    PacketsContainer(QString filePath, QString address, int packetSize = 1024, QObject* parent = nullptr);
-    QVector<Packet*>* makePacketsFromFile();
+    PacketsContainer(QObject* parent = nullptr);
+    QMap<int, Packet*> makePacketsFromFile(Settings& settings);
 
 private:
     QString filePath;
     QString address;
-    int packetSize;
 
-    QVector<Packet*>* packetsInVector;
+    QMap<int, Packet*> packetsInMap;
 
 public slots:
     void stopResendingPacket(int packetId);
 
+signals:
+    void closeApp();
 };
 
 #endif // PacketsContainer_H

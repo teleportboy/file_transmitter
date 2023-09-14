@@ -14,12 +14,11 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Network)
 
 add_executable(sender
   main.cpp
-  sender.h sender.cpp
-  Packet.h Packet.cpp
-  PacketsContainer.h PacketsContainer.cpp
-  PacketsSender.h PacketsSender.cpp
-  PacketReceiver.h PacketReceiver.cpp
-  types.h
+  Packet.cpp Packet.h PacketReceiver.cpp PacketReceiver.h PacketsContainer.cpp PacketsContainer.h PacketsSender.cpp PacketsSender.h   types.h
+  FileBuilder.h FileBuilder.cpp
+  Settings.h Settings.cpp
+  constants.h
+
 )
 target_link_libraries(sender Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Network)
 

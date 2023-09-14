@@ -4,11 +4,11 @@
 #include <QUdpSocket>
 #include <QDataStream>
 
-PacketReceiver::PacketReceiver(QObject *parent)
+PacketReceiver::PacketReceiver(int port, QObject *parent)
     : QObject{parent}
 {
     connect(&socket, &QUdpSocket::readyRead, this, &PacketReceiver::startReceive);
-    socket.bind(QHostAddress::Any, 2417);
+    socket.bind(QHostAddress::Any, port);
 }
 
 void PacketReceiver::startReceive() {
@@ -22,7 +22,7 @@ void PacketReceiver::startReceive() {
         PacketData packet;
         QDataStream stream(&datagram, QIODevice::ReadOnly);
 
-        //переделать эту парашу а то напрягает каждый раз когда структура пакета расширяется
+        //переделать
         stream >> packet.packetId;
         stream >> packet.packetType;
         stream >> packet.packetsCount;
@@ -39,7 +39,5 @@ void PacketReceiver::startReceive() {
                 emit packetReceived(packet.packetId);
                 break;
         }
-
-        //qDebug() << packet.packetId << packet.packetType << packet.packetsCount << packet.fileExtension;
     }
 }
