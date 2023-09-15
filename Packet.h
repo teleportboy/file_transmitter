@@ -10,21 +10,13 @@
 
 #include "types.h"
 
-
-//чёт сложно стало создавать этот объект. надо упростить его создание
 class Packet : public QObject {
     Q_OBJECT
 public:
-    Packet(QByteArray data, QString address, int id = 0, quint16 port = 2417,
-           PacketType type = PacketType::SendFilePacket, int msDelayResent = 500, QObject* parent = nullptr);
-    Packet(PacketData data, QString ipv4, quint16 port, QObject* parent = nullptr);
+    Packet(QObject* parent = nullptr);
     ~Packet();
 
     void packetSent();
-
-    //refactor nado
-    void totalPackets(int packetsCount);
-    void fileExtension(QString extension);
 
 public slots:
     void trySendPacket();
@@ -43,6 +35,28 @@ private:
 
     QTimer* timer;
     int msDelayResent;
+
+    friend class PacketBuilder;
+};
+
+class PacketBuilder {
+public:
+    PacketBuilder(QObject* parent = nullptr);
+
+    PacketBuilder& setData(QByteArray data);
+    PacketBuilder& setAddress(QString address);
+    PacketBuilder& setPort(quint16 port);
+    PacketBuilder& setPacketId(int id);
+    PacketBuilder& setPaketType(PacketType type = PacketType::SendFilePacket);
+    PacketBuilder& setMsDelayResent(int msDelay);
+    PacketBuilder& setTotalPackets(int totalPackets);
+    PacketBuilder& setFileName(QString fileName);
+
+    Packet* buildPacket();
+
+private:
+    Packet* packet;
+
 };
 
 #endif // PACKET_H

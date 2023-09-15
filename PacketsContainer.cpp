@@ -20,18 +20,27 @@ QMap<int, Packet*> PacketsContainer::makePacketsFromFile(Settings& settings) {
     }
 
     QFileInfo fileInfo(file);
-    const int fileSize = fileInfo.size();
 
-    int totalPackets = fileSize / settings.getPacketSize();
-    totalPackets += fileSize % settings.getPacketSize() > 0 ? 1 : 0;
+    int fileSize = fileInfo.size();
+    int totalPackets = (fileSize / settings.getPacketSize()) + (fileSize % settings.getPacketSize() > 0 ? 1 : 0);
 
-    QString fileExtension = fileInfo.suffix();
+    QString fileName = fileInfo.fileName();
 
     for (int i = 0; !file.atEnd(); i++) {
         QByteArray buffer = file.read(settings.getPacketSize());
-        Packet* packet = new Packet(buffer, settings.getAddress(), i, settings.getPort());
-        packet->totalPackets(totalPackets);
-        packet->fileExtension(fileExtension);
+
+        PacketBuilder packetBuilder;
+        Packet* packet = packetBuilder
+                         .setData(buffer)
+                         .setAddress(settings.getAddress())
+                         .setPacketId(i)
+                         .setPort(settings.getPort())
+                         .setMsDelayResent(250)
+                         .setTotalPackets(totalPackets)
+                         .setFileName(fileName)
+                         .setPaketType()
+                         .buildPacket();
+
         packetsInMap[i] = packet;
     }
 

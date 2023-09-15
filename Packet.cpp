@@ -1,29 +1,8 @@
 #include "Packet.h"
 #include <QDebug>
 
-Packet::Packet(QByteArray data, QString ipv4, int id,
-               quint16 port, PacketType type, int msDelayResent, QObject* parent)
-    : port(port), QObject(parent), msDelayResent(msDelayResent)
-{
-    packet.packetId = id;
-    packet.data = data;
-    packet.packetType = type;
-
+Packet::Packet(QObject* parent) : QObject(parent) {
     isSent = false;
-
-    address = new QHostAddress(ipv4);
-    timer = new QTimer(this);
-}
-
-Packet::Packet(PacketData data, QString ipv4, quint16 port, QObject* parent)
-    : port(port), QObject(parent)
-{
-    packet = data;
-
-    isSent = false;
-
-    address = new QHostAddress(ipv4);
-    timer = new QTimer(this);
 }
 
 void Packet::trySendPacket() {
@@ -36,7 +15,7 @@ void Packet::trySendPacket() {
         stream << packet.packetId;
         stream << packet.packetType;
         stream << packet.packetsCount;
-        stream << packet.fileExtension;
+        stream << packet.fileName;
         stream << packet.data;
 
         socket.writeDatagram(dataToSend, *address, port);
@@ -61,15 +40,56 @@ void Packet::startPacketSending() {
     timer->start(msDelayResent);
 }
 
-void Packet::totalPackets(int packetsCount) {
-    packet.packetsCount = packetsCount;
-}
-
-void Packet::fileExtension(QString fileExtension) {
-    packet.fileExtension = fileExtension;
-}
-
 Packet::~Packet() {
     //delete timer;
     delete address;
+}
+
+PacketBuilder::PacketBuilder(QObject* parent) {
+    packet = new Packet(parent);
+}
+
+PacketBuilder& PacketBuilder::setData(QByteArray data) {
+    packet->packet.data = data;
+    return *this;
+}
+
+PacketBuilder& PacketBuilder::setAddress(QString address) {
+    packet->address = new QHostAddress(address);
+    return *this;
+}
+
+PacketBuilder& PacketBuilder::setPort(quint16 port) {
+    packet->port = port;
+    return *this;
+}
+
+PacketBuilder& PacketBuilder::setPacketId(int id) {
+    packet->packet.packetId = id;
+    return *this;
+}
+
+PacketBuilder& PacketBuilder::setPaketType(PacketType type) {
+    packet->packet.packetType = type;
+    return *this;
+}
+
+PacketBuilder& PacketBuilder::setMsDelayResent(int msDelay) {
+    packet->msDelayResent = msDelay;
+    packet->timer = new QTimer(packet);
+    return *this;
+}
+
+PacketBuilder& PacketBuilder::setTotalPackets(int totalPackets) {
+    packet->packet.packetsCount = totalPackets;
+    return *this;
+}
+
+PacketBuilder& PacketBuilder::setFileName(QString fileName) {
+    packet->packet.fileName = fileName;
+    return *this;
+}
+
+Packet* PacketBuilder::buildPacket() {
+    return packet;
 }

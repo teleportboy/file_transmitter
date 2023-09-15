@@ -26,7 +26,7 @@ void PacketReceiver::startReceive() {
         stream >> packet.packetId;
         stream >> packet.packetType;
         stream >> packet.packetsCount;
-        stream >> packet.fileExtension;
+        stream >> packet.fileName;
         stream >> packet.data;
 
         switch (packet.packetType) {

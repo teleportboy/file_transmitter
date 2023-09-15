@@ -34,6 +34,7 @@ int main(int argc, char *argv[]) {
     }
     receiver.startReceive();
 
+
     app.exec();
 
     //sender.stop(); ??

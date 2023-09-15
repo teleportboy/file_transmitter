@@ -11,10 +11,12 @@ class FileBuilder : public QObject {
     Q_OBJECT
 public:
     FileBuilder(QObject *parent = nullptr);
-    void buildFile(QString fileExtension);
+    void buildFile(QString fileName);
 
 private:
     QMap<int, QByteArray> filePackets;
+
+    QString generateFilePath(QString fileName);
 
 public slots:
     void addPacket(PacketData packet);

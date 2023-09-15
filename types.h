@@ -13,7 +13,7 @@ typedef struct PacketData {
     int packetId;
     int packetType;
     int packetsCount;
-    QString fileExtension;
+    QString fileName;
     QByteArray data;
 } PacketData;
 

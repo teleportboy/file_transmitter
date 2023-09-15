@@ -57,9 +57,15 @@ void PacketsSender::stop() {
 }
 
 void PacketsSender::sendApprovalPacket(QString address, quint16 port, PacketData packetData) {
-    packetData.packetType = PacketType::ApproveFilePacket;
-    packetData.data.clear();
+    PacketBuilder packetBuilder;
+    Packet* packet = packetBuilder
+                    .setAddress(address)
+                    .setPacketId(packetData.packetId)
+                    .setPort(port)
+                    .setTotalPackets(packetData.packetsCount)
+                    .setFileName(packetData.fileName)
+                    .setPaketType(PacketType::ApproveFilePacket)
+                    .buildPacket();
 
-    Packet packet(packetData, address, port);
-    packet.trySendPacket();
+    packet->trySendPacket();
 }

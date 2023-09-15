@@ -17,22 +17,29 @@ void FileBuilder::addPacket(PacketData packet) {
     filePackets.insert(packet.packetId, packet.data);
 
     if (filePackets.size() == packet.packetsCount) {
-        buildFile(packet.fileExtension);
+        buildFile(packet.fileName);
     }
 }
 
-
-void FileBuilder::buildFile(QString fileExtension) {
-    QMap<int, QByteArray>::iterator it;
-
+QString FileBuilder::generateFilePath(QString fileName) {
     qsrand(QTime::currentTime().msec());
     int randomNumber = qrand();
+    QString numberAsText = "_" + QString::number(randomNumber, 16).toUpper();
+    int dotIndex = fileName.lastIndexOf('.');
+    fileName.insert(dotIndex, numberAsText);
 
-    QString numberAsText = QString::number(randomNumber, 16).toUpper();
+    return fileName;
+}
 
-    QString filePath = "file" + numberAsText + "." + fileExtension;
+
+void FileBuilder::buildFile(QString fileName) {
+    QMap<int, QByteArray>::iterator it;
+
+    QString filePath = generateFilePath(fileName);
+
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Append)) {
+        emit closeApp();
         return;
     }
 
@@ -42,3 +49,4 @@ void FileBuilder::buildFile(QString fileExtension) {
 
     emit closeApp();
 }
+
